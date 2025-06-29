@@ -1,0 +1,55 @@
+{
+  "name": "WakaTime",
+  "id": "ggod.wakatime",
+  "description": "WakaTime integration and time tracking",
+  "developer": "ggod",
+  "tags": ["editor", "utility"],
+  "version": "v1.0.0",
+  "geode": "4.6.2",
+  "gd": {
+    "win": "2.2074",
+    "android": "2.2074",
+    "mac": "2.2074",
+    "ios": "2.2074"
+  },
+  "resources": {
+    "sprites": [
+      "resources/wakatimeButton.png",
+      "resources/wakatimeLogoGolden.png",
+      "resources/wakatimeMenuBackground.png",
+      "resources/wakatimeDebugIcon.png"
+    ]
+  },
+  "settings": {
+    "online": {
+      "type": "bool",
+      "name": "Enable WakaTime integration",
+      "default": false,
+      "description": "If enabled, your Geometry Dash Editor activity and level names will be sent to WakaTime servers for time tracking.\n\nYou can disable this option at any time to stop sending data"
+    },
+    "auto-download": {
+      "type": "bool",
+      "name": "Enable wakatime-cli auto-download",
+      "default": false,
+      "description": "Automatically download and update the wakatime-cli binary required to send activity data to WakaTime.\n\nIf disabled, you must install wakatime-cli manually.\nSee the mod's README for manual installation instructions."
+    },
+    "api-key": {
+      "type": "string",
+      "name": "WakaTime API key",
+      "default": "",
+      "description": "Your WakaTime API key, available at https://wakatime.com/settings/account.\n\nIf left blank, the mod will attempt to use the key from your .wakatime.cfg file, if present."
+    },
+    "api-url": {
+      "type": "string",
+      "name": "WakaTime API URL",
+      "default": "https://api.wakatime.com/api/v1",
+      "description": "The WakaTime server URL.\n\n<cr>Warning: Changing this to a custom server will allow that server's owner to see your activity and project names.\nOnly change this if you know what you're doing.</c>"
+    },
+    "track-playtesting": {
+      "type": "bool",
+      "name": "Track Playtesting",
+      "default": true,
+      "description": "If enabled, playtesting will be tracked as Manual Testing. This setting only affects WakaTime integration, not the local tracking"
+    }
+  }
+}
