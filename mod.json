@@ -4,7 +4,7 @@
   "description": "WakaTime integration and time tracking",
   "developer": "ggod",
   "tags": ["editor", "utility"],
-  "version": "v1.0.0",
+  "version": "v1.0.1",
   "geode": "4.6.2",
   "gd": {
     "win": "2.2074",
