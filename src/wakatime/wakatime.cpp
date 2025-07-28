@@ -6,6 +6,12 @@
 #include "cli.hpp"
 #include "../utils/utils.hpp"
 
+#ifdef GEODE_IS_IOS
+namespace wakatime {
+    // no-op
+    void sendHeartbeat() {};
+};
+#else
 namespace wakatime {
     std::thread heartbeatThread;
     std::atomic<bool> stopHeartbeat(false);
@@ -129,3 +135,4 @@ namespace wakatime {
         return lastHeartbeat;
     }
 }
+#endif

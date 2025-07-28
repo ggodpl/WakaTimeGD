@@ -37,6 +37,9 @@ const std::string os = "android";
 const std::string os = "linux";
 #endif
 
+#ifdef GEODE_IS_IOS
+namespace cli { };
+#else
 namespace cli {
     const std::string WAKATIME_DOWNLOAD_URL = "https://github.com/wakatime/wakatime-cli/releases/latest/download/";
     const std::string WAKATIME_VERSION_URL = "https://api.github.com/repos/wakatime/wakatime-cli/releases/latest";
@@ -275,3 +278,4 @@ namespace cli {
         return s_currentVersion;
     }
 }
+#endif
