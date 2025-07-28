@@ -17,6 +17,7 @@ bool WakaTimeMenu::setup() {
     m_radioMenu = CCMenu::create();
     m_radioMenu->setPosition({ 0, 0 });
     m_radioMenu->setAnchorPoint({ 0.5f, 0.5f });
+    m_radioMenu->setTouchPriority(-503);
     m_mainLayer->addChild(m_radioMenu);
 
     auto weeklyNormal = ButtonSprite::create("Weekly", "bigFont.fnt", "GJ_button_04.png", 0.5f);
@@ -98,8 +99,6 @@ void WakaTimeMenu::loadProjects(bool weekly) {
     }
 
     auto items = CCMenu::create();
-    float totalHeight = 0;
-    float offsetY = 0;
 
     std::vector<std::pair<std::string, int>> projectList;
 
@@ -108,40 +107,31 @@ void WakaTimeMenu::loadProjects(bool weekly) {
         projectList.push_back({name, total});
     }
 
+    float itemHeight = WakaTimeProjectItem::getItemSize().height;
+    float spacer = 5.f;
+    float ratio = (itemHeight + spacer) / itemHeight;
+    float anchorY = std::min(-(ratio * projectList.size() - 1.f), -(ratio * 4 - 1.f));
+
     int tag = 0;
 
     for (auto& [name, total] : projectList) {
         auto item = WakaTimeProjectItem::create(name, total, weekly);
-        item->setPosition({ m_scrollLayer->getContentWidth() / 2, offsetY });
+        item->setPosition({ m_scrollLayer->getContentWidth() / 2, -tag * (itemHeight + spacer) });
         item->setTag(tag);
+        item->setAnchorPoint({ 0.5f, anchorY });
         items->addChild(item);
 
-        int height = WakaTimeProjectItem::getItemSize().height + 5;
-
-        offsetY -= height;
-        totalHeight += height;
         tag += 1;
     }
 
-    if (!projectList.empty()) totalHeight -= 5;
+    float totalHeight = projectList.size() * (itemHeight + spacer) + spacer;
 
     items->setContentSize({ m_scrollLayer->getContentWidth(), totalHeight });
-    items->setPosition({ 0, m_scrollLayer->getContentHeight() - totalHeight / 2 });
+    items->setPosition({ 0, 0 });
 
     m_scrollLayer->m_contentLayer->addChild(items);
     m_scrollLayer->m_contentLayer->setContentSize({ m_scrollLayer->getContentWidth(), std::max(totalHeight, m_scrollLayer->getContentHeight()) });
     m_scrollLayer->moveToTop();
-}
-
-void WakaTimeMenu::onTogglePressed(CCObject*) {
-    m_weekly = !m_weekly;
-
-    m_scrollLayer->m_contentLayer->removeAllChildren();
-    
-    if (m_weekly) setTitle("Weekly Projects");
-    else setTitle("All Projects");
-    
-    loadProjects(m_weekly);
 }
 
 void WakaTimeMenu::onDebugPressed(CCObject*) {

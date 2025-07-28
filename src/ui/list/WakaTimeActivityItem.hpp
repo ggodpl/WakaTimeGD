@@ -20,5 +20,5 @@ class WakaTimeActivityItem : public CCNode {
         std::string getName() const { return m_name; }
         int getTime() const { return m_total; }
         
-        static CCSize getItemSize() { return {320.f, 40.f}; }
+        static CCSize getItemSize() { return { 320.f, 40.f }; }
 };

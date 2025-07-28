@@ -68,13 +68,13 @@ namespace wakatime {
         std::filesystem::path path = cli::getPath();
 
         #ifdef GEODE_GD_VERSION
-            std::string gdVersion = "geometrydash/" + std::to_string(GEODE_GD_VERSION) + " ";
+            std::string gdVersion = fmt::format("geometrydash/{} ", std::to_string(GEODE_GD_VERSION));
         #else
             std::string gdVersion = "";
         #endif
 
         std::vector<std::string> args = {
-            "--plugin", utils::quote(gdVersion + "geometrydash-wakatime/1.0.0"),
+            "--plugin", utils::quote(fmt::format("{}geometrydash-wakatime/1.1.0", gdVersion)),
             "--category", utils::quote(category),
             "--entity-type", "app",
             "--entity", "\"Geometry Dash\""
@@ -102,22 +102,22 @@ namespace wakatime {
     }
 
     std::filesystem::path getHomeDirectory() {
-        const char* wakaHome = std::getenv("WAKATIME_HOME");
+        std::string wakaHome = geode::utils::getEnvironmentVariable("WAKATIME_HOME");
 
-        if (wakaHome != nullptr && std::filesystem::exists(wakaHome)) {
+        if (!wakaHome.empty() && std::filesystem::exists(wakaHome)) {
             return wakaHome;
         }
 
         geode::log::info("No WAKATIME_HOME present, using home directory");
 
-        const char* homeEnv =
+        std::string homeEnv =
             #ifdef GEODE_IS_WINDOWS
-                std::getenv("USERPROFILE");
+                geode::utils::getEnvironmentVariable("USERPROFILE");
             #else
-                std::getenv("HOME");
+                geode::utils::getEnvironmentVariable("HOME");
             #endif
             
-        if (!homeEnv) {
+        if (homeEnv.empty()) {
             geode::log::error("Could not determine home directory, using CWD as fallback");
             return std::filesystem::current_path();
         }

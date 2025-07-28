@@ -3,6 +3,7 @@
 #include <ctime>
 #include <chrono>
 #include <fmt/format.h>
+#include <Geode/utils/string.hpp>
 #include "../wakatime/tracker.hpp"
 
 namespace utils {
@@ -35,7 +36,7 @@ namespace utils {
     }
 
     inline std::string quote(const std::string& str) {
-        if (str.find(" ") != std::string::npos) return "\"" + str + "\"";
+        if (geode::utils::string::contains(str, ' ')) return fmt::format("\"{}\"", str);
         return str;
     }
 

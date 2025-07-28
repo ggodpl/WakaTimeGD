@@ -9,15 +9,14 @@ A Geometry Dash mod that integrates with [WakaTime](https://wakatime.com) to aut
 
 ## Setup
 
-1. Install the mod via Geode
-2. On the first launch, choose whether to enable WakaTime integration
-3. If enabled, the mod will automatically download the required WakaTime CLI (if you don't want that, disable it and follow Manual CLI Installation instructions below)
-4. Optionally configure your WakaTime API key and URL in mod settings
+1. On the first launch, choose whether to enable WakaTime integration
+2. If enabled, the mod will automatically download the required WakaTime CLI (if you don't want that, disable it and follow Manual CLI Installation instructions below)
+3. Optionally configure your WakaTime API key and URL in mod settings. If no API key is present, the game will use the key stored in your global wakatime config. If no URL is present, it will just use the default.
 
 ## Usage
 
 - Time tracking is done automatically when entering the level editor
-- You can view your statistics through the WakaTime button in the main menu
+- You can view your local statistics through the WakaTime button in the main menu
 
 ## Manual CLI Installation
 

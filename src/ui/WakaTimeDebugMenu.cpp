@@ -8,18 +8,20 @@ bool WakaTimeDebugMenu::setup() {
     setTitle("WakaTime");
     setID("WakaTimeDebugMenu");
 
+    #ifndef GEODE_IS_IOS
     std::string content = fmt::format(
         "CLI Status: {}\n\n"
         "CLI Path:  `{}`\n\n"
         "CLI Version: {}\n\n"
-        "Last Heartbeat: {}\n\n"
-        "Total local time: {}\n\n",
+        "Last Heartbeat: {}\n\n",
         cli::isInstalled() ? "<cg>Installed</c>" : "<cr>Not installed</c>",
         cli::getPath().filename().string(),
         fmt::format("{}{}</c>", cli::isLatest() ? "<cg>" : "<cy>", cli::getVersion()),
-        ::utils::ago(wakatime::getLastHeartbeat()),
-        Mod::get()->getSavedValue<int>("timeTrackingTotal")
+        ::utils::ago(wakatime::getLastHeartbeat())
     );
+    #else
+    std::string content = "WakaTime CLI is not available on iOS";
+    #endif
 
     auto textArea = MDTextArea::create(content, { m_mainLayer->getContentWidth() - 20, m_mainLayer->getContentHeight() - 60 });
     textArea->setID("debugInfo");

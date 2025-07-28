@@ -1,19 +1,19 @@
 {
   "name": "WakaTime",
   "id": "ggod.wakatime",
-  "description": "WakaTime integration and time tracking",
+  "description": "WakaTime integration and local time tracking",
   "developer": "ggod",
   "tags": ["editor", "utility"],
-  "version": "v1.0.1",
-  "geode": "4.6.2",
+  "version": "v1.1.0",
+  "geode": "4.7.0",
   "gd": {
     "win": "2.2074",
     "android": "2.2074",
-    "mac": "2.2074"
+    "mac": "2.2074",
+    "ios": "2.2074"
   },
   "resources": {
     "sprites": [
-      "resources/wakatimeButton.png",
       "resources/wakatimeLogoGolden.png",
       "resources/wakatimeMenuBackground.png",
       "resources/wakatimeDebugIcon.png"

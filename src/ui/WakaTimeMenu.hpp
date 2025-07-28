@@ -15,7 +15,6 @@ class WakaTimeMenu : public Popup<> {
         bool setup() override;
         void loadProjects(bool weekly);
         
-        void onTogglePressed(CCObject*);
         void onDebugPressed(CCObject*);
         void onWeeklyPressed(CCObject* sender);
         void onAllTimePressed(CCObject* sender);

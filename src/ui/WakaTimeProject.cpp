@@ -63,16 +63,21 @@ void WakaTimeProject::loadProject(const std::string& name, bool weekly) {
     float totalHeight = (WakaTimeActivityItem::getItemSize().height + 5) * activities.size();
     if (!activities.empty()) totalHeight -= 5;
 
-    float offsetY = m_scrollLayer->getContentHeight() - WakaTimeActivityItem::getItemSize().height / 2;
+    float itemHeight = WakaTimeActivityItem::getItemSize().height;
+    float spacer = 5.f;
+    float ratio = (itemHeight + spacer) / itemHeight;
+    float anchorY = std::min(-(ratio * activities.size() - 1.f), -(ratio * 3 - 1.f));
+
+    int tag = 0;
     
     for (auto& [name, total] : activities) {
         auto item = WakaTimeActivityItem::create(name, total);
-        item->setPosition({ m_scrollLayer->getContentWidth() / 2, offsetY });
+        item->setPosition({ m_scrollLayer->getContentWidth() / 2, -tag * (itemHeight + spacer) });
+        item->setTag(tag);
+        item->setAnchorPoint({ 0.5f, anchorY });
         items->addChild(item);
 
-        int height = WakaTimeActivityItem::getItemSize().height + 5;
-
-        offsetY -= height;
+        tag += 1;
     }
 
     if (!activities.empty()) totalHeight -= 5;
@@ -87,7 +92,7 @@ void WakaTimeProject::loadProject(const std::string& name, bool weekly) {
 
 WakaTimeProject* WakaTimeProject::create(const std::string& name, int total, bool weekly) {
     auto ret = new WakaTimeProject();
-    if (ret->initAnchored(350.f, 280.f, name, total, weekly, "WakaTimeMenuBackground.png"_spr)) {
+    if (ret->initAnchored(350.f, 280.f, name, total, weekly, "wakatimeMenuBackground.png"_spr)) {
         ret->autorelease();
         return ret;
     }

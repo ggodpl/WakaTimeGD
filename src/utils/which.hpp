@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <filesystem>
+#include <Geode/utils/general.hpp>
 
 #ifdef GEODE_IS_WINDOWS
 #include <io.h>
@@ -22,8 +23,8 @@ namespace which {
     }
 
     inline std::string which(const std::string& exec) {
-        const char* pathEnv = std::getenv("PATH");
-        if (!pathEnv) return "";
+        std::string pathEnv = geode::utils::getEnvironmentVariable("PATH");
+        if (pathEnv.empty()) return "";
 
         std::stringstream ss(pathEnv);
         std::string dir;

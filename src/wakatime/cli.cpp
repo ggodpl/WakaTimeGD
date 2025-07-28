@@ -8,7 +8,6 @@
 #include <fmt/format.h>
 #include "../utils/utils.hpp"
 #include "../utils/which.hpp"
-#include "../utils/semver.hpp"
 #include "cli.hpp"
 #include "wakatime.hpp"
 
@@ -30,7 +29,7 @@ const std::string arch = "amd64";
 
 #ifdef GEODE_IS_WINDOWS
 const std::string os = "windows";
-#elif defined(GEODE_IS_IOS) || defined(GEODE_IS_MACOS)
+#elif defined(GEODE_IS_MACOS)
 const std::string os = "darwin";
 #elif defined(GEODE_IS_ANDROID)
 const std::string os = "android";
@@ -84,7 +83,7 @@ namespace cli {
 
         s_path = s_resourcePath / path;
 
-        return path;
+        return s_path;
     }
 
     bool isInstalled() {
@@ -96,7 +95,7 @@ namespace cli {
 
         std::filesystem::path path = getPath();
 
-        std::string command = utils::quote(path.string()) + "--version";
+        std::string command = fmt::format("{} --version", utils::quote(path.string()));
         
         std::string result;
         char buffer[128];
@@ -140,23 +139,30 @@ namespace cli {
 
         req.userAgent("geometrydash-wakatime");
 
-        try {
-            webListener.setFilter(req.get(WAKATIME_VERSION_URL));
-            webListener.bind([](geode::utils::web::WebTask::Event* event) {
-                if (geode::utils::web::WebResponse* res = event->getValue()) {
-                    matjson::Value object = res->json().unwrap();
-                    s_latestVersion = object["tag_name"].asString().unwrapOr("").substr(1);
-                    cacheLatestVersion();
-                    checkForDownloads();
-                } else if (event->isCancelled()) {
-                    // no connection to github, aborting installation
+        webListener.setFilter(req.get(WAKATIME_VERSION_URL));
+        webListener.bind([](geode::utils::web::WebTask::Event* event) {
+            if (geode::utils::web::WebResponse* res = event->getValue()) {
+                if (!res->ok()) {
                     s_shouldInstall = false;
+                    geode::log::error("Error fetching WakaTime version. Status: {}", res->code());
+                    return;
                 }
-            });
-        } catch (const std::exception& e) {
-            s_shouldInstall = false;
-            geode::log::error("Error fetching WakaTime version: {}", e);
-        }
+                auto json = res->json();
+                if (json.isErr()) {
+                    s_shouldInstall = false;
+                    geode::log::error("Error fetching WakaTime version: {}", json.err());
+                    return;
+                }
+
+                matjson::Value object = json.unwrap();
+                s_latestVersion = object["tag_name"].asString().unwrapOr("").substr(1);
+                cacheLatestVersion();
+                checkForDownloads();
+            } else if (event->isCancelled()) {
+                // no connection to github, aborting installation
+                s_shouldInstall = false;
+            }
+        });
     }
 
     std::string getCachedVersion() {
@@ -189,7 +195,10 @@ namespace cli {
         // if there is no connection to github and wakatime-cli is downloaded, we leave it be
         if (!s_shouldInstall && !current.empty()) return true;
 
-        return semver::equal(s_latestVersion, current);
+        auto latestVersionInfo = geode::VersionInfo::parse(s_latestVersion);
+        auto currentVersionInfo = geode::VersionInfo::parse(current);
+
+        return latestVersionInfo == currentVersionInfo;
     }
 
     std::string getDownloadURL() {
@@ -208,40 +217,36 @@ namespace cli {
 
         req.userAgent("geometrydash-wakatime");
 
-        try {
-            downloadListener.setFilter(req.get(downloadURL));
-            downloadListener.bind([](geode::utils::web::WebTask::Event* event) {
-                if (geode::utils::web::WebResponse* res = event->getValue()) {
-                    try {
-                        geode::ByteVector data = res->data();
-                        auto unzipResult = geode::utils::file::Unzip::create(data);
-                        if (unzipResult) {
-                            auto _ = unzipResult.unwrap().extractAllTo(s_resourcePath);
-                            s_installed = true;
-                            s_currentVersion = s_latestVersion;
-                            geode::log::info("WakaTime CLI downloaded successfully");
-                        } else {
-                            geode::log::error("Failed to unzip downloaded data");
-                        }
-                    } catch (const std::exception& e) {
-                        geode::log::error("Error processing downloaded WakaTime CLI: {}", e.what());
-                    }
+        downloadListener.setFilter(req.get(downloadURL));
+        downloadListener.bind([](geode::utils::web::WebTask::Event* event) {
+            if (geode::utils::web::WebResponse* res = event->getValue()) {
+                auto data = res->data();
 
-                    downloadListener.disable();
-                    onChecksFinished();
-                } else if (event->isCancelled()) {
-                    geode::log::warn("WakaTime CLI download was cancelled");
-                    downloadListener.disable();
-                    onChecksFinished();
+                auto unzipResult = geode::utils::file::Unzip::create(data);
+                if (unzipResult.isOk()) {
+                    auto res = unzipResult.unwrap().extractAllTo(s_resourcePath);
+                    if (res.isErr()) geode::log::error("Error unzipping: {}", res.err());
+                    else {
+                        s_installed = true;
+                        s_currentVersion = s_latestVersion;
+                        geode::log::info("WakaTime CLI downloaded successfully");
+                    }
+                } else {
+                    geode::log::error("Failed to unzip downloaded data");
                 }
-            });
-        } catch (const std::exception& e) {
-            geode::log::error("Error downloading WakaTime CLI: {}", e);
-            onChecksFinished();
-        }
+
+                downloadListener.disable();
+                onChecksFinished();
+            } else if (event->isCancelled()) {
+                geode::log::warn("WakaTime CLI download was cancelled");
+                downloadListener.disable();
+                onChecksFinished();
+            }
+        });
     }
 
     void onChecksFinished() {
+        downloadListener.disable();
         // wakatime not installed, don't start the heartbeats
         if (!isInstalled()) return geode::log::info("Unable to start WakaTime");
         
