@@ -1,6 +1,6 @@
 #include <fmt/format.h>
 #include "WakaTimeProjectItem.hpp"
-#include "../WakaTimeProject.hpp"
+#include "../WakaTimeProjectNew.hpp"
 #include "../../utils/utils.hpp"
 
 bool WakaTimeProjectItem::init(const std::string& name, int total, bool weekly) {
@@ -69,7 +69,7 @@ bool WakaTimeProjectItem::init(const std::string& name, int total, bool weekly) 
 }
 
 void WakaTimeProjectItem::onItemPressed(CCObject* sender) {
-    auto project = WakaTimeProject::create(m_name, m_total, m_weekly);
+    auto project = WakaTimeProjectNew::create(m_name, m_total, m_weekly);
     if (project) project->show();
 }
 

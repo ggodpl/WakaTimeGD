@@ -4,7 +4,7 @@
   "description": "WakaTime integration and local time tracking",
   "developer": "ggod",
   "tags": ["editor", "utility"],
-  "version": "v1.1.0",
+  "version": "v2.0.0",
   "geode": "4.7.0",
   "gd": {
     "win": "2.2074",
@@ -12,15 +12,21 @@
     "mac": "2.2074",
     "ios": "2.2074"
   },
+  "links": {
+    "source": "https://github.com/ggodpl/WakaTimeGD"
+  },
   "resources": {
     "sprites": [
       "resources/wakatimeLogoGolden.png",
       "resources/wakatimeMenuBackground.png",
-      "resources/wakatimeDebugIcon.png"
+      "resources/wakatimeDebugIcon.png",
+      "resources/border.png",
+      "resources/fill.png",
+      "resources/borderSq.png",
+      "resources/fillSq.png",
+      "resources/left.png",
+      "resources/right.png"
     ]
-  },
-  "links": {
-    "source": "https://github.com/ggodpl/WakaTimeGD"
   },
   "settings": {
     "online": {

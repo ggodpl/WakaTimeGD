@@ -83,16 +83,87 @@ namespace utils {
         return fmt::format("{} {}, {} {} ago", hours, plural("hour", hours), minutes, plural("minute", minutes));
     }
 
-    inline std::string format(int duration) {
+    inline std::string format(int duration, int maxPrecision = 3) {
+        int seconds = duration % 60;
+        int minutes = (duration / 60) % 60;
+        int hours = duration / 60 / 60;
+
+        int precision = 0;
+
+        std::string time = "";
+        if (hours > 0 && precision < maxPrecision) {
+            time += fmt::format("{}h", hours);
+            precision++;
+        }
+        if (minutes > 0 && precision < maxPrecision) {
+            time += fmt::format("{}{}m", !time.empty() ? " " : "", minutes);
+            precision++;
+        }
+        if (seconds > 0 && precision < maxPrecision) time += fmt::format("{}{}s", !time.empty() ? " " : "", seconds);
+        
+        return time;
+    }
+
+    inline int pickStep(float duration, float aim) {
+        std::vector<int> STEPS = { 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200, 10800 };
+        float target = duration / aim;
+        for (int i = 0; i < STEPS.size(); i++) {
+            if (STEPS[i] >= target) return STEPS[i];
+        }
+
+        return STEPS[STEPS.size() - 1];
+    }
+
+    inline std::string formatPrecNoTrail(float f) {
+        float f_abs = std::abs(f);
+        float rem = f_abs - std::floor(f_abs);
+        if (rem > 0) return fmt::format("{:.1f}", f);
+        return fmt::format("{}", f);
+    }
+
+    inline std::string formatShort(float duration) {
+        if (duration < 60) return fmt::format("{}s", formatPrecNoTrail(duration));
+        else if (duration < 3600) return fmt::format("{}m", formatPrecNoTrail(duration / 60));
+        return fmt::format("{}h", formatPrecNoTrail(duration / 3600));
+    }
+
+    inline std::string formatClean(int duration) {
         int seconds = duration % 60;
         int minutes = (duration / 60) % 60;
         int hours = duration / 60 / 60;
 
         std::string time = "";
-        if (hours > 0) time += fmt::format("{}h", hours);
-        if (minutes > 0) time += fmt::format("{}{}m", !time.empty() ? " " : "", minutes);
-        if (seconds > 0) time += fmt::format("{}{}s", !time.empty() ? " " : "", seconds);
+        if (hours > 0) time += fmt::format("{} {}", hours, plural("hour", hours));
+        if (minutes > 0) time += fmt::format("{}{} {}", !time.empty() ? ", " : "", minutes, plural("minute", minutes));
+        if (seconds > 0) time += fmt::format("{}{} {}", !time.empty() ? ", " : "", seconds, plural("second", seconds));
         
-        return time;
+        return time.empty() ? "0 seconds" : time;
+    }
+
+    inline float roundNearest(float n, float x) {
+        return (std::floor((n + x - 1) / x)) * x;
+    }
+
+    inline std::vector<float> getDivisions(float duration, int aim = 10) {
+        int step = pickStep(duration, aim);
+
+        float start = step;
+        float end = duration + step;
+
+        int count = std::ceil(end / step) + 1;
+        
+        std::vector<float> divisions;
+        for (int i = 0; i < count; i++) {
+            divisions.push_back(start + i * step);
+        }
+
+        return divisions;
+    }
+
+    inline std::vector<std::string> getWeek(int day) {
+        std::vector<std::string> days = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        auto res = std::vector<std::string>(days.begin() + day + 1, days.end());
+        res.insert(res.end(), days.begin(), days.end() - (7 - day - 1));
+        return res;
     }
 };

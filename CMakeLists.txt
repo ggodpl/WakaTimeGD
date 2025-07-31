@@ -11,7 +11,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 project(Wakatime VERSION 1.0.0)
 
 # Add all source files inside src (recursively)
-file(GLOB_RECURSE SOURCES src/*.cpp src/hooks/*.cpp src/wakatime/*.cpp src/ui/*.cpp src/ui/list/*.cpp)
+file(GLOB_RECURSE SOURCES src/*.cpp src/*/*.cpp)
 
 # Set up the mod binary
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
