@@ -4,7 +4,7 @@ A Geometry Dash mod that integrates with [WakaTime](https://wakatime.com) to aut
 
 ## Features
 - **Automatic time tracking** - Tracks editing and playtesting sessions in the background
-- **Local statistics** - View weekly and all-time project breakdowns
+- **Local statistics** - View project breakdowns with activity charts for each week
 - **WakaTime integration** - Optional sync with the WakaTime dashboard
 
 ## Setup

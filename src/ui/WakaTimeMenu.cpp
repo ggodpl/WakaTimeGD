@@ -9,7 +9,7 @@
 bool WakaTimeMenu::setup() {
     setTitle("Tracked projects");
 
-    m_scrollLayer = ScrollLayer::create({ m_mainLayer->getContentWidth() - 20, m_mainLayer->getContentHeight() - 30 });
+    m_scrollLayer = ScrollLayer::create({ m_mainLayer->getContentWidth() - 20, m_mainLayer->getContentHeight() - 50 });
     m_scrollLayer->setPosition({ 10, 15 });
     m_mainLayer->addChild(m_scrollLayer);
 
@@ -79,7 +79,7 @@ void WakaTimeMenu::loadProjects() {
     float itemHeight = WakaTimeProjectItem::getItemSize().height;
     float spacer = 5.f;
     float ratio = (itemHeight + spacer) / itemHeight;
-    float anchorY = std::min(-(ratio * projectList.size() - 1.f), -(ratio * 4 - 1.f));
+    float anchorY = 1.f - ratio * std::max(5, int(projectList.size()));
 
     int tag = 0;
 

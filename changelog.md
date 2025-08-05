@@ -1,3 +1,7 @@
+# 2.0.1
+- Fix scroll layer elements positioning
+- Add Happy Textures as a suggested dependency (CCScale9Sprite fixes)
+
 # 2.0.0
 - Complete revamp of the project menu
 - Improved JSON structure for local time tracking (breaking change)
