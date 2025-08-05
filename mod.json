@@ -4,7 +4,7 @@
   "description": "WakaTime integration and local time tracking",
   "developer": "ggod",
   "tags": ["editor", "utility"],
-  "version": "v1.1.0",
+  "version": "v2.0.0",
   "geode": "4.7.0",
   "gd": {
     "win": "2.2074",
@@ -12,15 +12,21 @@
     "mac": "2.2074",
     "ios": "2.2074"
   },
+  "links": {
+    "source": "https://github.com/ggodpl/WakaTimeGD"
+  },
   "resources": {
     "sprites": [
       "resources/wakatimeLogoGolden.png",
       "resources/wakatimeMenuBackground.png",
-      "resources/wakatimeDebugIcon.png"
+      "resources/wakatimeDebugIcon.png",
+      "resources/border.png",
+      "resources/fill.png",
+      "resources/borderSq.png",
+      "resources/fillSq.png",
+      "resources/left.png",
+      "resources/right.png"
     ]
-  },
-  "links": {
-    "source": "https://github.com/ggodpl/WakaTimeGD"
   },
   "settings": {
     "online": {
@@ -52,6 +58,18 @@
       "name": "Track Playtesting",
       "default": true,
       "description": "If enabled, playtesting will be tracked as Manual Testing. This setting only affects WakaTime integration, not the local tracking"
+    },
+    "color-designing": {
+      "type": "color",
+      "name": "Designing activity color",
+      "default": [31, 184, 255],
+      "description": "Which color will be used for the Designing activity"
+    },
+    "color-playtesting": {
+      "type": "color",
+      "name": "Playtesting activity color",
+      "default": [31, 255, 106],
+      "description": "Which color will be used for the Playtesting activity"
     }
   }
 }

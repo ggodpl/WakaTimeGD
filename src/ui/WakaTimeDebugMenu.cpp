@@ -2,7 +2,7 @@
 #include "WakaTimeDebugMenu.hpp"
 #include "../wakatime/cli.hpp"
 #include "../wakatime/wakatime.hpp"
-#include "../utils/utils.hpp"
+#include "../utils/time.hpp"
 
 bool WakaTimeDebugMenu::setup() {
     setTitle("WakaTime");
@@ -17,7 +17,7 @@ bool WakaTimeDebugMenu::setup() {
         cli::isInstalled() ? "<cg>Installed</c>" : "<cr>Not installed</c>",
         cli::getPath().filename().string(),
         fmt::format("{}{}</c>", cli::isLatest() ? "<cg>" : "<cy>", cli::getVersion()),
-        ::utils::ago(wakatime::getLastHeartbeat())
+        time_utils::ago(wakatime::getLastHeartbeat())
     );
     #else
     std::string content = "WakaTime CLI is not available on iOS";

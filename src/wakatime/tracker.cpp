@@ -2,6 +2,7 @@
 #include "tracker.hpp"
 #include "wakatime.hpp"
 #include "../utils/utils.hpp"
+#include "../utils/time.hpp"
 
 namespace tracker {
     void ActivityTracker::pause() {
@@ -49,55 +50,55 @@ namespace tracker {
 
     void ActivityTracker::logActivity(const std::string& project, ActivityCategory category, int duration) {
         if (duration < 1) return;
-
-        // update both all-time and weekly 
-        update(project, category, duration, false);
-        update(project, category, duration, true);
+ 
+        update(project, category, duration);
     }
 
-    void ActivityTracker::update(const std::string& project, ActivityCategory category, int duration, bool weekly) {
-        std::string day = utils::formatDay();
-        std::string week = utils::formatWeek();
-
-        std::string valueKey = "timeTracking";
-        if (weekly) valueKey += "_" + week;
+    void ActivityTracker::update(const std::string& projectName, ActivityCategory category, int duration) {
+        std::string day = time_utils::formatDay();
+        auto categoryName = utils::categoryToString(category, false);
     
         matjson::Value data;
-        if (geode::Mod::get()->hasSavedValue(valueKey)) data = geode::Mod::get()->getSavedValue<matjson::Value>(valueKey);
-        else data = matjson::Value::object();
+        if (geode::Mod::get()->hasSavedValue("localTime")) data = geode::Mod::get()->getSavedValue<matjson::Value>("localTime");
+        else {
+            // base structure
+            data = matjson::Value::object();
+            data["version"] = 1;
+            data["projects"] = matjson::Value::object();
 
-        int weekTotal = data["total"].asInt().unwrapOr(0);
-        data["total"] = weekTotal + duration;
-
-        if (!data["projects"].isObject()) data["projects"] = matjson::Value::object();
-        if (!data["projects"][project].isObject()) {
-            data["projects"][project] = matjson::Value::object();
-            data["projects"][project]["total"] = 0;
-            data["projects"][project]["categories"] = matjson::Value::object();
+            auto metadata = matjson::Value::object();
+            metadata["first_tracked"] = day;
+            metadata["last_updated"] = day;
+            metadata["total_projects"] = 2;
+            metadata["total_days"] = 1;
+            data["metadata"] = metadata;
         }
 
-        int projectTotal = data["projects"][project]["total"].asInt().unwrapOr(0);
-        data["projects"][project]["total"] = projectTotal + duration;
+        data["metadata"]["last_updated"] = day;
 
-        std::string categoryName = utils::categoryToString(category, false);
-
-        if (!data["projects"][project]["categories"].isObject()) data["projects"][project]["categories"] = matjson::Value::object();
-        if (!data["projects"][project]["categories"][categoryName].isObject()) {
-            data["projects"][project]["categories"][categoryName] = matjson::Value::object();
-            data["projects"][project]["categories"][categoryName]["total"] = 0;
-            data["projects"][project]["categories"][categoryName]["activity"] = matjson::Value::object();
+        if (!data["projects"].contains(projectName)) {
+            data["projects"][projectName] = matjson::Value::object();
+            data["projects"][projectName]["days"] = matjson::Value::object();
+            data["projects"][projectName]["total"] = 0;
+            data["projects"][projectName]["first_tracked"] = day;
         }
 
-        int categoryTotal = data["projects"][project]["categories"][categoryName]["total"].asInt().unwrapOr(0);
-        data["projects"][project]["categories"][categoryName]["total"] = categoryTotal + duration;
+        auto& project = data["projects"][projectName];
+        if (!project["days"].contains(day)) {
+            project["days"][day] = matjson::Value::object();
+            project["days"][day]["total"] = 0;
+            project["days"][day]["activities"] = matjson::Value::object();
+        }
 
-        if (!data["projects"][project]["categories"][categoryName]["activity"].isObject()) data["projects"][project]["categories"][categoryName]["activity"] = matjson::Value::object();
-        
-        int activityTotal = data["projects"][project]["categories"][categoryName]["activity"][day].asInt().unwrapOr(0);
-        data["projects"][project]["categories"][categoryName]["activity"][day] = activityTotal + duration;
+        project["total"] = project["total"].asInt().unwrapOr(0) + duration;
 
-        geode::Mod::get()->setSavedValue(valueKey, data);
-        auto _ = geode::Mod::get()->saveData();
+        auto& dayData = project["days"][day];
+        dayData["total"] = dayData["total"].asInt().unwrapOr(0) + duration;
+
+        auto& activities = dayData["activities"];
+        activities[categoryName] = activities[categoryName].asInt().unwrapOr(0) + duration;
+
+        geode::Mod::get()->setSavedValue<matjson::Value>("localTime", data);
     }
 
     std::string ActivityTracker::getProject() const {

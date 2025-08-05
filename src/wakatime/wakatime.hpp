@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <chrono>
+#include <filesystem>
 
 namespace wakatime {
     void init();

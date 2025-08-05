@@ -41,7 +41,7 @@ namespace tracker {
             void onActivityChange();
             void checkActivity();
             void logActivity(const std::string& project, ActivityCategory category, int duration);
-            void update(const std::string& project, ActivityCategory cateory, int duration, bool allTime);
+            void update(const std::string& project, ActivityCategory category, int duration);
         public:
             static ActivityTracker& getInstance() {
                 static ActivityTracker instance;

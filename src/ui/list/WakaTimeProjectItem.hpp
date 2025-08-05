@@ -8,16 +8,16 @@ class WakaTimeProjectItem : public CCNode {
     protected:
         std::string m_name;
         int m_total;
-        bool m_weekly;
+        int m_weekly;
         CCLabelBMFont* m_nameLabel;
         CCLabelBMFont* m_timeLabel;
         CCScale9Sprite* m_bg;
         CCMenu* m_buttonMenu;
         
-        bool init(const std::string& projectName, int totalTime, bool weekly);
+        bool init(const std::string& projectName, int total, int weekly);
         
     public:
-        static WakaTimeProjectItem* create(const std::string& projectName, int totalTime, bool weekly);
+        static WakaTimeProjectItem* create(const std::string& projectName, int total, int weekly);
         
         void onItemPressed(CCObject* sender);
         

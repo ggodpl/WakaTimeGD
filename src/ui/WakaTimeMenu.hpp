@@ -8,18 +8,11 @@ class WakaTimeMenu : public Popup<> {
         bool m_weekly = true;
         bool m_toggled = false;
         ScrollLayer* m_scrollLayer;
-        CCMenuItemToggler* m_weeklyButton;
-        CCMenuItemToggler* m_allTimeButton;
-        CCMenu* m_radioMenu;
 
         bool setup() override;
-        void loadProjects(bool weekly);
+        void loadProjects();
         
         void onDebugPressed(CCObject*);
-        void onWeeklyPressed(CCObject* sender);
-        void onAllTimePressed(CCObject* sender);
-
-        void updateButtons();
     public:
         static WakaTimeMenu* create();
 };

@@ -1,19 +1,27 @@
 #pragma once
 #include <Geode/Geode.hpp>
+#include "chart/charts/MixedChart.hpp"
+#include "chart/node/WeekSelector.hpp"
 
 using namespace geode::prelude;
 
-class WakaTimeProject : public Popup<const std::string&, int, bool> {
+class WakaTimeProject : public Popup<const std::string&, int, int> {
     protected:
-        bool m_weekly = true;
+        int m_weekly;
+        int m_total;
+
         bool m_toggled = false;
         ScrollLayer* m_scrollLayer;
-        CCMenuItemToggler* m_weeklyButton;
-        CCMenuItemToggler* m_allTimeButton;
-        CCMenu* m_radioMenu;
+        AxisLayout* m_baseLayout;
+        MixedChart* m_chart;
+        WeekSelector* m_weekSelector;
 
-        bool setup(const std::string& name, int total, bool weekly);
-        void loadProject(const std::string& name, bool weekly);
+        std::string m_projectName;
+
+        bool setup(const std::string& name, int total, int weekly);
+        bool loadProject(const std::string& name, int offset = 0);
     public:
-        static WakaTimeProject* create(const std::string& name, int total, bool weekly);
+        static WakaTimeProject* create(const std::string& name, int total, int weekly);
+
+        void onWeekSelectorUpdate();
 };

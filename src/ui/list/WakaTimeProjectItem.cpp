@@ -1,9 +1,9 @@
 #include <fmt/format.h>
 #include "WakaTimeProjectItem.hpp"
 #include "../WakaTimeProject.hpp"
-#include "../../utils/utils.hpp"
+#include "../../utils/time.hpp"
 
-bool WakaTimeProjectItem::init(const std::string& name, int total, bool weekly) {
+bool WakaTimeProjectItem::init(const std::string& name, int total, int weekly) {
     if (!CCNode::init()) return false;
     
     m_name = name;
@@ -40,7 +40,7 @@ bool WakaTimeProjectItem::init(const std::string& name, int total, bool weekly) 
     
     addChild(m_nameLabel, 2);
     
-    std::string time = ::utils::format(m_total);
+    std::string time = time_utils::format(m_total);
     
     m_timeLabel = CCLabelBMFont::create(time.c_str(), "goldFont.fnt");
     m_timeLabel->setAnchorPoint({ 1.f, 0.5f });
@@ -73,9 +73,9 @@ void WakaTimeProjectItem::onItemPressed(CCObject* sender) {
     if (project) project->show();
 }
 
-WakaTimeProjectItem* WakaTimeProjectItem::create(const std::string& projectName, int totalTime, bool weekly) {
+WakaTimeProjectItem* WakaTimeProjectItem::create(const std::string& projectName, int total, int weekly) {
     auto ret = new WakaTimeProjectItem();
-    if (ret->init(projectName, totalTime, weekly)) {
+    if (ret->init(projectName, total, weekly)) {
         ret->autorelease();
         return ret;
     }
