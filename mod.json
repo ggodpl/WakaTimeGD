@@ -4,7 +4,7 @@
   "description": "WakaTime integration and local time tracking",
   "developer": "ggod",
   "tags": ["editor", "utility"],
-  "version": "v2.0.1",
+  "version": "v2.0.2",
   "geode": "4.7.0",
   "gd": {
     "win": "2.2074",
@@ -51,12 +51,14 @@
       "type": "string",
       "name": "WakaTime API key",
       "default": "",
+      "filter": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_",
       "description": "Your WakaTime API key, available at https://wakatime.com/settings/account.\n\nIf left blank, the mod will attempt to use the key from your .wakatime.cfg file, if present."
     },
     "api-url": {
       "type": "string",
       "name": "WakaTime API URL",
       "default": "https://api.wakatime.com/api/v1",
+      "filter": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:/.-_",
       "description": "The WakaTime server URL.\n\n<cr>Warning: Changing this to a custom server will allow that server's owner to see your activity and project names.\nOnly change this if you know what you're doing.</c>"
     },
     "track-playtesting": {

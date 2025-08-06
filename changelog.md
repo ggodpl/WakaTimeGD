@@ -1,3 +1,7 @@
+# 2.0.2
+- Fix setting inputs to allow entering URLs and API keys
+- Change the way executing wakatime-cli process is handled internally
+
 # 2.0.1
 - Fix scroll layer elements positioning
 - Add Happy Textures as a suggested dependency (CCScale9Sprite fixes)

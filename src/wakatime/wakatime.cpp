@@ -80,7 +80,7 @@ namespace wakatime {
         #endif
 
         std::vector<std::string> args = {
-            "--plugin", utils::quote(fmt::format("{}geometrydash-wakatime/1.1.0", gdVersion)),
+            "--plugin", utils::quote(fmt::format("{}geometrydash-wakatime/{}", gdVersion, geode::Mod::get()->getVersion().toNonVString())),
             "--category", utils::quote(category),
             "--entity-type", "app",
             "--entity", "\"Geometry Dash\""

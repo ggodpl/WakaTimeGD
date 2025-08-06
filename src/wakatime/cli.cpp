@@ -267,8 +267,20 @@ namespace cli {
         geode::log::debug("Executing WakaTime CLI command: {}", command);
 
         std::thread([command]() {
-            int result = std::system(utils::quote(command).c_str());
-            if (result != 0) geode::log::error("WakaTime CLI command failed");
+            std::string fullCommand = utils::quote(command);
+            #ifdef GEODE_IS_WINDOWS
+                fullCommand += " >nul 2>&1";
+            #else
+                fullCommand += " >/dev/null 2>&1";
+            #endif
+            
+            FILE* pipe = POPEN(fullCommand.c_str(), "r");
+            if (pipe) {
+                int result = PCLOSE(pipe);
+                if (result != 0) geode::log::error("WakaTime CLI command failed with exit code: {}", result);
+            } else {
+                geode::log::error("WakaTime CLI command failed to start");
+            }
         }).detach();
 
         return true;
