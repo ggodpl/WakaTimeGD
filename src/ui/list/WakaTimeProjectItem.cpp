@@ -10,20 +10,18 @@ bool WakaTimeProjectItem::init(const std::string& name, int total, int weekly) {
     m_total = total;
     m_weekly = weekly;
     
-    setContentSize(getItemSize());
-    setAnchorPoint({0.5f, 0.5f});
+    this->setContentSize(getItemSize());
+    this->setAnchorPoint({0.5f, 0.5f});
 
-    // BACKGROUND
-    
+    // background 
     auto m_bg = CCScale9Sprite::create("square02b_small.png");
     m_bg->setContentSize({ getItemSize().width - 2, getItemSize().height - 2 });
     m_bg->setPosition(getContentSize() / 2);
     m_bg->setColor({ 45, 53, 60 });
     m_bg->setOpacity(100);
-    addChild(m_bg, 1);
+    this->addChild(m_bg, 1);
 
-    // LABELS
-    
+    // labels
     m_nameLabel = CCLabelBMFont::create(m_name.c_str(), "bigFont.fnt");
     m_nameLabel->setAnchorPoint({ 0.f, 0.5f });
     m_nameLabel->setPosition({ 15, getItemSize().height / 2 });
@@ -38,18 +36,34 @@ bool WakaTimeProjectItem::init(const std::string& name, int total, int weekly) {
         }
     }
     
-    addChild(m_nameLabel, 2);
+    this->addChild(m_nameLabel, 2);
     
     std::string time = time_utils::format(m_total);
     
     m_timeLabel = CCLabelBMFont::create(time.c_str(), "goldFont.fnt");
     m_timeLabel->setAnchorPoint({ 1.f, 0.5f });
-    m_timeLabel->setPosition({ getItemSize().width - 15.f, getItemSize().height / 2 });
+    m_timeLabel->setPosition({ getItemSize().width - 25.f, getItemSize().height / 2 });
     m_timeLabel->setScale(0.35f);
-    addChild(m_timeLabel, 2);
+    this->addChild(m_timeLabel, 2);
 
-    // BUTTON
-    
+    // chevron so people know they can press the thing
+    auto chevron = CCSprite::create("right.png"_spr);
+    float scale = 10.f / chevron->getContentHeight();
+    chevron->setScale(scale);
+    chevron->setColor({ 255, 255, 255 });
+    chevron->setOpacity(255);
+
+    auto chevronMenu = CCMenuItemSpriteExtra::create(
+        chevron,
+        this,
+        menu_selector(WeekSelector::prev)
+    );
+    chevronMenu->setAnchorPoint({ 1.f, 0.5f });
+    chevronMenu->setPosition({ getItemSize().width - 10.f, getItemSize().height / 2});
+
+    this->addChild(chevronMenu);
+
+    // button
     auto buttonSprite = CCScale9Sprite::create("square02b_001.png");
     buttonSprite->setContentSize(getItemSize());
     buttonSprite->setOpacity(0);
@@ -63,7 +77,7 @@ bool WakaTimeProjectItem::init(const std::string& name, int total, int weekly) {
     m_buttonMenu = CCMenu::create();
     m_buttonMenu->addChild(button);
     m_buttonMenu->setPosition(getContentSize() / 2);
-    addChild(m_buttonMenu, 3);
+    this->addChild(m_buttonMenu, 3);
     
     return true;
 }

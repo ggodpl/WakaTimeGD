@@ -1,3 +1,9 @@
+# 2.1.0
+- Full rebrand
+- Rewrite the about section to be more user friendly 
+- Add a chevron to the projects list to indicate interactability
+- Fix Happy Textures dependency importance
+
 # 2.0.2
 - Fix setting inputs to allow entering URLs and API keys
 - Change the way executing wakatime-cli process is handled internally

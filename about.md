@@ -5,7 +5,7 @@ A Geometry Dash mod for tracking your daily time spent in the editor, with optio
 ## Features
 - **Automatic time tracking** - Tracks your editing and playtesting time in the background
 - **Project breakdowns** – View time spent on each level, with weekly activity charts
-- **WakaTime integration** – Send your data to the WakaTime dashboard, just like in your code editor (currently unsupported on iOS!)
+- **WakaTime integration** – Send your data to the WakaTime dashboard, just like in your code editor <cr>(currently unsupported on iOS!)</c>
 
 ## Setup
 1. On first launch, you’ll be asked whether to enable WakaTime integration and auto-installation of the WakaTime CLI
