@@ -10,6 +10,7 @@
 #include "../utils/which.hpp"
 #include "cli.hpp"
 #include "wakatime.hpp"
+#include "process.hpp"
 
 #ifdef GEODE_IS_WINDOWS
 #define POPEN _popen
@@ -101,19 +102,23 @@ namespace cli {
         std::string command = fmt::format("{} --version", utils::quote(path.string()));
         
         std::string result;
-        char buffer[128];
 
-        FILE* pipe = POPEN(command.c_str(), "r");
-        if (!pipe) {
-            geode::log::error("Unable to fetch wakatime-cli version");
+        TinyProcessLib::Process process(
+            command, "",
+            [&result](const char * bytes, size_t n) {
+                result += std::string(bytes, n);
+            },
+            [](const char * bytes, size_t n) {
+                geode::log::error("WakaTime CLI version check failed: {}", std::string(bytes, n));
+            }
+        );
+
+        int exitCode = process.get_exit_status();
+
+        if (exitCode != 0) {
+            geode::log::error("WakaTime CLI closed with status: {}", exitCode);
             return "";
         }
-
-        while (!feof(pipe)) {
-            if (fgets(buffer, sizeof(buffer), pipe) != nullptr) result += buffer;
-        }
-
-        PCLOSE(pipe);
 
         result.erase(0, result.find_first_not_of(" \n\r\t"));
         result.erase(result.find_last_not_of(" \n\r\t") + 1);
@@ -267,20 +272,16 @@ namespace cli {
         geode::log::debug("Executing WakaTime CLI command: {}", command);
 
         std::thread([command]() {
-            std::string fullCommand = utils::quote(command);
-            #ifdef GEODE_IS_WINDOWS
-                fullCommand += " >nul 2>&1";
-            #else
-                fullCommand += " >/dev/null 2>&1";
-            #endif
+            TinyProcessLib::Process process(
+                command.c_str(), "",
+                [](const char *bytes, size_t n) {},
+                [](const char *bytes, size_t n) {
+                    geode::log::error("WakaTime CLI command failed: {}", std::string(bytes, n));
+                }
+            );
             
-            FILE* pipe = POPEN(fullCommand.c_str(), "r");
-            if (pipe) {
-                int result = PCLOSE(pipe);
-                if (result != 0) geode::log::error("WakaTime CLI command failed with exit code: {}", result);
-            } else {
-                geode::log::error("WakaTime CLI command failed to start");
-            }
+            int exitCode = process.get_exit_status();
+            if (exitCode != 0) geode::log::error("WakaTime CLI closed with status: {}", exitCode);
         }).detach();
 
         return true;

@@ -16,6 +16,11 @@ file(GLOB_RECURSE SOURCES src/*.cpp src/*/*.cpp)
 # Set up the mod binary
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
+add_subdirectory(external/tiny-process-library ${CMAKE_CURRENT_BINARY_DIR}/tiny-process-library)
+
+target_include_directories(${PROJECT_NAME} PRIVATE external/tiny-process-library)
+target_link_libraries(${PROJECT_NAME} tiny-process-library)
+
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")
 else()
