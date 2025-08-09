@@ -16,6 +16,10 @@ file(GLOB_RECURSE SOURCES src/*.cpp src/*/*.cpp)
 # Set up the mod binary
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
+set(REPROC++ ON)
+add_subdirectory(external/reproc)
+target_link_libraries(${PROJECT_NAME} reproc++)
+
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")
 else()

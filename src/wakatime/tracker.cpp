@@ -38,6 +38,7 @@ namespace tracker {
         active = true;
         activityStarted = std::chrono::system_clock::now();
         geode::log::debug("New activity: {} {}", getCategory(), project);
+        onActivityChange(); // send heartbeat
     }
 
     void ActivityTracker::checkActivity() {
