@@ -1,3 +1,7 @@
+# 2.1.1
+- Fix WakaTime CLI showing a terminal window when called
+- Fix heartbeats not being sent when entering the level editor
+
 # 2.1.0
 - Full rebrand
 - Rewrite the about section to be more user friendly 
