@@ -4,7 +4,7 @@
   "description": "Editor time tracker with WakaTime integration",
   "developer": "ggod",
   "tags": ["editor", "utility"],
-  "version": "v2.1.1",
+  "version": "v2.1.2",
   "geode": "4.7.0",
   "gd": {
     "win": "2.2074",

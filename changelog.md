@@ -1,3 +1,7 @@
+# 2.1.2
+- Fix macOS editor time tracking ([#3](https://github.com/ggodpl/WakaTimeGD/pull/3), authored by [hiimjasmine00](https://github.com/hiimjasmine00))
+- Fix macOS crash ([#3](https://github.com/ggodpl/WakaTimeGD/pull/3), authored by [hiimjasmine00](https://github.com/hiimjasmine00), thanks!)
+
 # 2.1.1
 - Fix WakaTime CLI showing a terminal window when called
 - Fix heartbeats not being sent when entering the level editor
