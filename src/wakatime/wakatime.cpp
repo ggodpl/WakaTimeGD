@@ -41,8 +41,10 @@ namespace wakatime {
     }
 
     void startHeartbeats() {
+        stopHeartbeats();
         stopHeartbeat = false;
         heartbeatThread = std::thread(wakatime::sendHeartbeatsWrapper);
+        heartbeatThread.detach();
     }
 
     void stopHeartbeats() {
