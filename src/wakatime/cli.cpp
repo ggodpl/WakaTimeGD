@@ -10,7 +10,7 @@
 #include "../utils/which.hpp"
 #include "cli.hpp"
 #include "wakatime.hpp"
-#include "process.hpp"
+#include "reproc++/run.hpp"
 
 #ifdef GEODE_IS_WINDOWS
 #define POPEN _popen
@@ -97,26 +97,27 @@ namespace cli {
     std::string getCurrentVersion() {
         if (!isInstalled()) return "";
 
-        std::filesystem::path path = getPath();
-
-        std::string command = fmt::format("{} --version", utils::quote(path.string()));
+        std::vector<std::string> args = { getPath().string(), "--version" };
         
-        std::string result;
+        std::string result, stderr_output;
+        
+        reproc::options options;
+        options.redirect.parent = false;
 
-        TinyProcessLib::Process process(
-            command, "",
-            [&result](const char * bytes, size_t n) {
-                result += std::string(bytes, n);
-            },
-            [](const char * bytes, size_t n) {
-                geode::log::error("WakaTime CLI version check failed: {}", std::string(bytes, n));
-            }
-        );
+        auto [status, ec] = reproc::run(args, options, reproc::sink::string(result), reproc::sink::string(stderr_output));
 
-        int exitCode = process.get_exit_status();
+        if (ec) {
+            geode::log::error("WakaTime CLI exited with error code: {}", ec.message());
+            return "";
+        }
 
-        if (exitCode != 0) {
-            geode::log::error("WakaTime CLI closed with status: {}", exitCode);
+        if (status != 0) {
+            geode::log::error("WakaTime CLI exited with status: {}", status);
+            return "";
+        }
+
+        if (!stderr_output.empty()) {
+            geode::log::error("WakaTime CLI stderr: {}", stderr_output);
             return "";
         }
 
@@ -263,25 +264,25 @@ namespace cli {
     }
 
     bool execute(const std::filesystem::path& path, const std::vector<std::string>& args) {
-        std::string command = utils::quote(path.string());
-
-        for (const auto& arg : args) {
-            command += " " + arg;
-        }
+        std::vector<std::string> command;
+        command.push_back(path.string());
+        command.insert(command.end(), args.begin(), args.end());
 
         geode::log::debug("Executing WakaTime CLI command: {}", command);
 
         std::thread([command]() {
-            TinyProcessLib::Process process(
-                command.c_str(), "",
-                [](const char *bytes, size_t n) {},
-                [](const char *bytes, size_t n) {
-                    geode::log::error("WakaTime CLI command failed: {}", std::string(bytes, n));
-                }
-            );
-            
-            int exitCode = process.get_exit_status();
-            if (exitCode != 0) geode::log::error("WakaTime CLI closed with status: {}", exitCode);
+            reproc::options options;
+            options.redirect.parent = false;
+
+            std::string stdout_output, stderr_output;
+
+            auto [status, ec] = reproc::run(command, options, reproc::sink::string(stdout_output), reproc::sink::string(stderr_output));
+
+            if (ec) geode::log::error("WakaTime CLI exited with error code: {}", ec.message());
+
+            if (!stderr_output.empty()) geode::log::error("WakaTime CLI command stderr: {}", stderr_output);
+
+            if (status != 0) geode::log::error("WakaTime CLI exited with status: {}", status);
         }).detach();
 
         return true;
