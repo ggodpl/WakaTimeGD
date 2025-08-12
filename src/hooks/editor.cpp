@@ -101,8 +101,7 @@ static_assert(GEODE_COMP_GD_VERSION == 22074, "Incompatible GD version");
 uintptr_t keyBackClickedAddress = base::get() + GEODE_ARM_MAC(0x22c97c) GEODE_INTEL_MAC(0x2830d0);
 
 void hookKeyBackClicked(void* self) {
-    wakatime::sendHeartbeat();
-    tracker::ActivityTracker::getInstance().resetActivity();
+    tracker::ActivityTracker::getInstance().resume();
 
     reinterpret_cast<void(*)(void*)>(keyBackClickedAddress)(self);
 }
