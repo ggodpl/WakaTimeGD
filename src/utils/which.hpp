@@ -19,7 +19,12 @@ const char SEPARATOR = ':';
 
 namespace which {
     inline bool is_exec(const std::filesystem::path& path) {
-        return std::filesystem::exists(path) && std::filesystem::is_regular_file(path) && (ACCESS(path.string().c_str(), X_OK) == 0);
+        std::error_code ec;
+
+        if (!std::filesystem::exists(path, ec)) return false;
+        if (!std::filesystem::is_regular_file(path, ec)) return false;
+
+        return ACCESS(path.string().c_str(), X_OK) == 0;
     }
 
     inline std::string which(const std::string& exec) {

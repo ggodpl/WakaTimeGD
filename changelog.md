@@ -1,3 +1,6 @@
+# 2.1.4
+- Fix mod crashing when filesystem checks fail
+
 # 2.1.3
 - Fix back key resetting activity instead of resuming on macOS ([#4](https://github.com/ggodpl/WakaTimeGD/pull/4), authored by [hiimjasmine00](https://github.com/hiimjasmine00), thanks again!)
 
