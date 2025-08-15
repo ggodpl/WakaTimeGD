@@ -1,3 +1,6 @@
+# 2.1.5
+- Add permission check to the thing from the previous patch
+
 # 2.1.4
 - Fix mod crashing when filesystem checks fail
 

@@ -7,13 +7,8 @@
 #include <Geode/utils/general.hpp>
 
 #ifdef GEODE_IS_WINDOWS
-#include <io.h>
-#define ACCESS _access
-#define X_OK 4
 const char SEPARATOR = ';';
 #else
-#include <unistd.h>
-#define ACCESS access
 const char SEPARATOR = ':';
 #endif
 
@@ -24,7 +19,17 @@ namespace which {
         if (!std::filesystem::exists(path, ec)) return false;
         if (!std::filesystem::is_regular_file(path, ec)) return false;
 
-        return ACCESS(path.string().c_str(), X_OK) == 0;
+        #ifdef GEODE_IS_WINDOWS
+            // i THINK windows files are generally executable anyway,
+            // so if they exist and are regular that's PROBABLY good enough
+            return true;
+        #else
+            auto perms = std::filesystem::status(path, ec).permissions();
+            if (ec) return false;
+
+            using std::filesystem::perms;
+            return (perms & (perms::owner_exec | perms::group_exec | perms::others_exec)) != perms::none;
+        #endif
     }
 
     inline std::string which(const std::string& exec) {
